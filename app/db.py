@@ -11,3 +11,5 @@ class Database:
 
 # Initialize DB connection
 db = Database(os.getenv("MONGO_DETAILS"))
+
+
