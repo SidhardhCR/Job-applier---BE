@@ -12,3 +12,4 @@ db = client[DB_NAME]
 
 # Access collections from db
 users_collection = db[os.getenv("COLLECTION_USER_DETAILS")]
+user_job_details = db[os.getenv("COLLECTION_JOB_DETAILS")]
