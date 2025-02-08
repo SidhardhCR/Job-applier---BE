@@ -5,15 +5,15 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers.user_routes import router as user_router
-
-
+from app.routers.job_router import router as job_router
 
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (you can restrict to specific domains)
+    # Allow all origins (you can restrict to specific domains)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -24,7 +24,6 @@ load_dotenv()
 MONGO_DETAILS = os.getenv("MONGO_DETAILS")
 DB_NAME = os.getenv("DB_NAME")
 COLLECTION_USER_DETAILS = os.getenv("COLLECTION_USER_DETAILS")
-
 
 
 # Ensure all required variables are loaded
@@ -38,5 +37,5 @@ if not COLLECTION_USER_DETAILS:
 
 # Include the routes
 app.include_router(user_router)
+app.include_router(job_router)
 # app.include_router(job_routes.router)
-
