@@ -1,7 +1,7 @@
 from app.services import hash_password, verify_password
 from app.models import UserSignup
 from fastapi import HTTPException
-
+from pymongo import UpdateOne
 
 
 async def signup_user(user: UserSignup, users_collection):
@@ -32,5 +32,34 @@ async def login_user(user: UserSignup, users_collection):
 
 
 async def user_job_description(data, user_job_details):
-    response = await user_job_details.insert_one(data.dict())
-    return {"message": "Job description submitted successfully"}
+    """Insert or update user job description with a skillsUpdated flag."""
+    
+    # Define filter condition (Assuming user_id is unique for job descriptions)
+    filter_condition = {"user_id": data.user_id}
+
+    # Fetch existing data (if any)
+    existing_record = await user_job_details.find_one(filter_condition)
+
+    # Extract existing skills if record exists
+    existing_skills = existing_record.get("skills", []) if existing_record else []
+
+    # Determine if skills have changed
+    skillsUpdated = set(existing_skills) != set(data.skills)
+
+    # Define update operation
+    update_operation = {
+        "$set": data.dict()  # Update fields if already exists
+    }
+
+    # Perform upsert (update if exists, insert if not)
+    response = await user_job_details.update_one(filter_condition, update_operation, upsert=True)
+
+    if response.upserted_id:
+        return {"message": "Job description added successfully", "skillsUpdated": True}
+    else:
+        return {"message": "Job description updated successfully", "skillsUpdated": skillsUpdated}
+
+
+# async def user_job_description(data, user_job_details):
+#     response = await user_job_details.insert_one(data.dict())
+#     return {"message": "Job description submitted successfully"}
