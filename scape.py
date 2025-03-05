@@ -18,7 +18,7 @@ def scrape_jobs():
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
 
-    url = "http://localhost:5174/"
+    url = "http://localhost:5173/"
     driver.get(url)
 
     jobs = []
